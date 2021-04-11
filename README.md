@@ -1,4 +1,4 @@
-# useLanguage - simple localization for React
+# useTranslate - simple localization for React
 
 ## Most Basic Use:
 
