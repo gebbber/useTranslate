@@ -5,7 +5,7 @@
 Import `{ Localize }` and wrap it around your `<App>`, listing the available languages:
 
 ```javascript
-// app.js
+// App.js
 
 import { Localize } from 'usetranslate';
 
@@ -15,7 +15,7 @@ function App() {
 
     return (
         <Localize avail={langs}>
-            <App>
+            <App />
         </Localize>
     );
 }
@@ -115,7 +115,7 @@ return (
 
 `useTranslate` uses React 'context' to pick up the language chosen by the `<Localize>` component, and translates an object full of message objects.
 
-Best practice for defining your language assets is to keep them close to where they're used&mdash;in the component. They go nicely out of the way at the end of the component file.  You import `useTranslate`, define a `Messages` object outside of your render function (object name is up to you), and feed `Messages` to `useTranslate` when you run the render function.  
+A good practice for defining your language assets is to keep them close to where they're used, such as in the component&mdash;they go nicely at the end of the component file if you're only working with a few messages and languages. You could also split them into an include file, and export the `Messages` object from `./Component-messages.js` or similar. Once you've imported `useTranslate` and you have the `Messages` object, feed `Messages` to `useTranslate` when you run the render function and it translates your messages for you.
 
 `useTranslate` returns an object full of messages translated to the currently-selected language. If you store the result in a separate object called `Message` (singular), then the code is nicely readable: (same example as above)
 
@@ -141,6 +141,7 @@ When translating each message, the translate function first looks for an exact m
 
 Again, this behavior is modified by the prop options that were passed to `Localize`: using `<Localize strict>` throws an error if a match is not found, and `<Localize flagMissing>` puts `[¿«`funny characters`»?]` around any failed matches&mdash;the idea again being to draw it to the developer's attention.
 
+Things obviously get a little bit wonky when language assets are missing from some messages, but if you provide translations in all of the languages you said you would provide (in the `avail` prop), things should be fine.
 
 ***
 ## The `Messages` Object
@@ -199,7 +200,7 @@ return (
 Messages.Hello = {enUS: 'Hello there.'};
 ```
 
-The translator function will look for `ENUS`, not `enUS`, because all-caps was used in the `avail` list of languages.  Hyphens are removed, but case must match between the languages specified as object properties, and the tags listed in '`avail`'.
+The translator function will look for `ENUS`, not `enUS`, because all-caps was used in the `avail` list of languages.  Hyphens are removed, but case must match between the languages specified as object properties, and the tags listed in '`avail`'.   (This example would actually work as written, but not because it's found the language&mdash;rather because it'll fall back to the only message present on the object.)
 
 ## Questions and Comments
 
@@ -207,5 +208,5 @@ Please feel free to contact me with questions, comments, bug reports, feature re
 
 ## Things To Do
 
-* Convert all language tags and object properties to lower-case to avoid the case-sensitive problem
-* Use accept-language package to pick language for each message separately? Mixed translations could be a weird user experience
+* Convert all language tags and object properties to lower-case to avoid the case-sensitive problem (not sure it's actually a "problem")
+* Use accept-language package to pick language for each message separately? (Mixed translations could be a weird user experience)
