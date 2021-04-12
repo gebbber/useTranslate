@@ -2,7 +2,7 @@
 
 ## Most Basic Use:
 
-Import `{ Localize }` and wrap your `<App>` with it, listing the language options you've implemented:
+Import `{ Localize }` and wrap it around your `<App>`, listing the available languages:
 
 ```javascript
 // app.js
@@ -21,7 +21,7 @@ function App() {
 }
 ```
 
-Use the `useTranslate` hook in your components, and keep your language assets nearby but just a little bit out of the way&mdash;probably at the end of the same file.  Use the hook to translate all of the messages at once, and keep the JSX easy to read by picking property names that indicate pretty clearly what the message will say:
+Import `useTranslate` into any component, and use it to translate your messages. Keep your messages with the component:
 
 ```javascript
 import React from 'react';
@@ -65,9 +65,9 @@ const Messages = {
 
 ## More Sophisticated Uses
 
-The `<Localize>` component takes the provided list of available languages (via '`avail`' prop), and uses the `accept-language` package to choose the most appropriate of the listed languages.  The language is selected immediately for the entire app context, based on the language list provided&mdash;**it is not re-selected for each translated message based on available translations.**
+The `<Localize>` component takes the provided list of available languages (via `avail` prop), and uses the `accept-language` package to choose the most appropriate of the listed languages.  The language is selected by the `<Localize>` component based on the language list provided, it is not re-selected at the time of translation to choose the best language for each component.
 
-You can provide the user's preferred language to `<Localize>` using the '`lang`' prop. Such a string could be from the 'Accept-Language' HTTP header whcih could be sent back from the server, or could be stored on a user's profile, or an individual language tag selected from a drop-down box, etc.  It does need to be a BCP 47 compliant language tag, with the `-` not removed. Shown hard-coded to `en-US` here, for clarity:
+Although `<Localize>` defaults to the browser language setting, you can (and should) allow the user to select an interface language, and you can provide it to `<Localize>` using the `lang` prop.  The value provided to `lang` can be a language tag, or a series of language tags as would be provided by the 'Accept-Language' HTTP header thatcould be sent back from the server. (Not all users are in their own countries and on their own computers, so it's better to provide them with a UI component or similar to select their language.) The value does need to be a BCP 47 compliant language tag, with the `-` **not** removed. The value of `lang` is shown hard-coded to `en-US` here, for clarity:
 
 ```javascript
 return (    
@@ -77,7 +77,7 @@ return (
 );
 ```
 
-If '`lang`' is not specified, `Localize` attempts to use the value of the `navigator.language` property, which should work for most cases and provides for very simple basic use.  To ignore `navigator.language` completely, add an `ignoreBrowser` attribute: (not sure why you'd want to do this, as the browser language is only used as a fallback)
+If `lang` is not specified, `Localize` attempts to use the value of the `navigator.language` property, which provides for a very simple basic use case.  To ignore `navigator.language` completely, add an `ignoreBrowser` attribute: (not sure why you'd want to do this, as the browser language is only used as a fallback anyway)
 
 ```javascript
 return (    
@@ -89,7 +89,7 @@ return (
 
 There are some additional prop options for `<Localize>` that affect how the `useTranslate` works later on:
 
-* Use '`strict`' to throw an error if a `Messages` object is translated and is missing the preferred language.  The error will only be thrown if an attempt to translate the object is made, and only if the preferred language is missing. (Default fallback behavior is to not throw an error, but to return the object's '`name`' property, if it has one, and if not, to return any available property.)
+* Use `strict` to throw an error if a translation attempt is made and chosen language is missing.  The error will only be thrown if an attempt to translate the object is made, and only if the preferred language is missing. (Default fallback behavior is to *not* throw an error, but to display the object's `name` property, if present, or otherwise to return any available property.)  
 
 ```javascript
 return (    
@@ -99,7 +99,7 @@ return (
 );
 ```
 
-* Use '`flagMissing`' to put `[¿«`funny characters`»?]` around any fallback messages for which the chosen language was not available.
+* Use `flagMissing` to put `[¿«`funny characters`»?]` around any fallback messages for which the chosen language was not available.
 
 ```javascript
 return (    
@@ -113,11 +113,11 @@ return (
 
 ## `useTranslate`:
 
-`useTranslate` uses React 'context' to pick up the language chosen by the `<Localize>` component, and translates an object full of objects.
+`useTranslate` uses React 'context' to pick up the language chosen by the `<Localize>` component, and translates an object full of message objects.
 
-Best practice for defining your language assets is to keep them close to where they're used, but a little bit out of the way&mdash;they go nicely at the end of the component file.  You define a `Messages` object (name is up to you) outside of your render function, and since module-level statements are run as the module is loaded and before the render function runs, `Messages` will be available to the render function when it needs it.  
+Best practice for defining your language assets is to keep them close to where they're used&mdash;in the component. They go nicely out of the way at the end of the component file.  You import `useTranslate`, define a `Messages` object outside of your render function (object name is up to you), and feed `Messages` to `useTranslate` when you run the render function.  
 
-Import `useTranslate`, give it the `Messages` object, and it gives you back the translated messages. If you store the result in a separate object called `Message` (singular), then each translated message can be read from the object nicely.
+`useTranslate` returns an object full of messages translated to the currently-selected language. If you store the result in a separate object called `Message` (singular), then the code is nicely readable: (same example as above)
 
 ```javascript
 import { useTranslate } from 'usetranslate';
@@ -137,15 +137,15 @@ function LogoutModal() {
 }
 ```
 
-When translating each message, the translate function first looks for an exact match.  If it can't find one, then it looks for a '`name`' property, and returns that.  If there's no `name` property, it returns an arbitrary translation&mdash;probably the first one added to the object, but this can't be relied upon.
+When translating each message, the translate function first looks for an exact match.  If it can't find one, then it looks for a `name` property, and returns that&mdash;how useful this will be remains to be seen, but the idea is to let you see the names of objects that still need translation work.  If there's no `name` property, it returns an arbitrary translation&mdash;perhaps the first property added to the object, but this probably can't be relied upon.
 
-This behavior is modified slightly by the prop options that were passed to `Localize`: using `<Localize strict>` throws an error if a match is not found, and `<Localize flagMissing>` puts `[¿«`funny characters`»?]` around any failed matches&mdash;the idea being to draw it to the developer's attention.
+Again, this behavior is modified by the prop options that were passed to `Localize`: using `<Localize strict>` throws an error if a match is not found, and `<Localize flagMissing>` puts `[¿«`funny characters`»?]` around any failed matches&mdash;the idea again being to draw it to the developer's attention.
 
 
 ***
 ## The `Messages` Object
 
-There are two obvious syntaxes for declaring message contents at the end of a file.  Take your pick:
+There are two obvious syntaxes for declaring message contents at the end of a file.  Take your pick, or let me know if you find a more elegant way of doing this:
 
 ```javascript
 const Messages = {};
@@ -178,18 +178,15 @@ const Messages = {
 }
 ```
 
-
-
-
 ### Property Names: 
 
-* First layer of property names are up to you, but `PascalCaseIsEasyToReadAndStandsOutABit`.  They are only used later to refer to your messages. Don't be afraid of being verbose&mdash;if you had left a string there in your component, it would have been the entire message.
+* First layer of property names are up to you, but `PascalCaseIsEasyToReadAndStandsOutABit`.  They are only used later to refer to your messages. Don't be afraid of being verbose&mdash;if you had left a string there in your component, it would have been the entire message.  It's nice for it to look like a UI message, rather than to look like a variable.
 
-* On the second layer, property names have to be chosen carefully.  The property looked up on the message object to choose the translated message is the language tag provided in the '`avail'` langauges list, with hyphens removed.  **Although BCP 47 language tags are not case sensitive, the typecase must match or the properties will not be found.**  Be intentional about following a convention for language tag typecase.  (Typecase only needs to match between the '`avail`' array you provide, and the object properties, it doesn't need to match the language header string received from the browser or user preferences).
+* On the second layer, property names identifying languages have to be chosen carefully.  The property looked up on the message object to choose the translated message is the language tag provided in the '`avail'` langauges list, with hyphens removed.  **Although BCP 47 language tags are not case-sensitive, JavaScript property names are case-sensitive, and the typecase must match what you provided in the `avail` prop or the properties will not be found.**  Be intentional about following a convention for language tag typecase.  (Typecase only needs to match between the '`avail`' array you provide, and the object properties, it doesn't need to match the language header string received from the browser or stored user preferences).
 
 Just to illustrate this problem:
 
-The following **won't work**, even though `EN-US` is a legal langauge tag: (this is pseudocode for illustration)
+The following **won't work**, even though `EN-US` is a legal langauge tag: (this is pseudocode for illustration purposes)
 ```javascript
 return (
     <Localize avail={['EN-US']}>
@@ -202,4 +199,13 @@ return (
 Messages.Hello = {enUS: 'Hello there.'};
 ```
 
-The translator function will look for `ENUS`, not `enUS`.  Dashes are removed, but case must match between the languages specified as object properties, and the tags listed in '`avail`'.
+The translator function will look for `ENUS`, not `enUS`, because all-caps was used in the `avail` list of languages.  Hyphens are removed, but case must match between the languages specified as object properties, and the tags listed in '`avail`'.
+
+## Questions and Comments
+
+Please feel free to contact me with questions, comments, bug reports, feature requests...
+
+## Things To Do
+
+* Convert all language tags and object properties to lower-case to avoid the case-sensitive problem
+* Use accept-language package to pick language for each message separately? Mixed translations could be a weird user experience

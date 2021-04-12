@@ -1,6 +1,5 @@
 import React from 'react';
-
-const acceptLanguage = require('accept-language');
+import acceptLanguage from 'accept-language';
 
 const TranslatorContext = React.createContext(()=>{});
 
