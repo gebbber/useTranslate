@@ -1,6 +1,6 @@
 {
   "name": "usetranslate",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "useTranslate hook for easy client-side localization in ReactJS",
   "main": "index.js",
   "scripts": {
