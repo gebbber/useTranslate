@@ -1,7 +1,7 @@
-import React from 'react';
+import {createElement, createContext, useContext} from 'react';
 import acceptLanguage from 'accept-language';
 
-const TranslatorContext = React.createContext(()=>{});
+const TranslatorContext = createContext(()=>{});
 
 export function Localize(props) {
     
@@ -32,17 +32,13 @@ export function Localize(props) {
         else return text;
     }
 
-    return (
-        <TranslatorContext.Provider value={Translate}>
-            {props.children}
-        </TranslatorContext.Provider>
-    );
+    return createElement(TranslatorContext.Provider, {value: Translate}, props.children);
 
 }
 
 export function useTranslate(Messages) {
     
-    const Translate = React.useContext(TranslatorContext);
+    const Translate = useContext(TranslatorContext);
 
     const Translated = {};
 
