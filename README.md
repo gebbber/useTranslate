@@ -65,9 +65,9 @@ const Messages = {
 
 ## More Sophisticated Uses
 
-The `<Localize>` component takes the provided list of available languages (via `avail` prop), and uses the `accept-language` package to choose the most appropriate of the listed languages.  The language is selected by the `<Localize>` component based on the language list provided, it is not re-selected at the time of translation to choose the best language for each component.
+The `<Localize>` component takes the provided list of available languages (via `avail` prop), and uses the `picklanguage` package to choose the most appropriate of the listed languages.  The language is selected by the `<Localize>` component based on the language list provided, it is not re-selected at the time of translation to choose the best language for each component.
 
-Although `<Localize>` defaults to the browser language setting, you can (and should) allow the user to select an interface language, and you can provide it to `<Localize>` using the `lang` prop.  The value provided to `lang` can be a language tag, or a series of language tags as would be provided by the 'Accept-Language' HTTP header thatcould be sent back from the server. (Not all users are in their own countries and on their own computers, so it's better to provide them with a UI component or similar to select their language.) The value does need to be a BCP 47 compliant language tag, with the `-` **not** removed. The value of `lang` is shown hard-coded to `en-US` here, for clarity:
+Although `<Localize>` defaults to the browser language setting, you can (and should) allow the user to select an interface language, and you can provide it to `<Localize>` using the `lang` prop.  The value provided to `lang` can be a language tag, or a series of language tags as would be provided by the 'Accept-Language' HTTP header that could be sent back from the server. (Not all users are in their own countries and on their own computers, so it's better to provide them with a UI component or similar to select their language.) The value does need to be a BCP 47 compliant language tag, with the `-` *not* removed. The value of `lang` is shown hard-coded to `en-US` here, for clarity:
 
 ```javascript
 return (    
@@ -183,7 +183,7 @@ const Messages = {
 
 * First layer of property names are up to you, but `PascalCaseIsEasyToReadAndStandsOutABit`.  They are only used later to refer to your messages. Don't be afraid of being verbose&mdash;if you had left a string there in your component, it would have been the entire message.  It's nice for it to look like a UI message, rather than to look like a variable.
 
-* On the second layer, property names identifying languages have to be chosen carefully.  The property looked up on the message object to choose the translated message is the language tag provided in the '`avail'` langauges list, with hyphens removed.  **Although BCP 47 language tags are not case-sensitive, JavaScript property names are case-sensitive, and the typecase must match what you provided in the `avail` prop or the properties will not be found.**  Be intentional about following a convention for language tag typecase.  (Typecase only needs to match between the '`avail`' array you provide, and the object properties, it doesn't need to match the language header string received from the browser or stored user preferences).
+* On the second layer, property names identifying languages have to be chosen carefully.  The property looked up on the message object to choose the translated message is the language tag provided in the '`avail'` langauges list, with hyphens removed.  Although BCP 47 language tags are not case-sensitive, JavaScript property names are case-sensitive, and the typecase must match what you provided in the `avail` prop or the properties will not be found.  Be intentional about following a convention for language tag typecase.  (Typecase only needs to match between the '`avail`' array you provide, and the object properties, it doesn't need to match the language header string received from the browser or stored user preferences).
 
 Just to illustrate this problem:
 
@@ -204,9 +204,4 @@ The translator function will look for `ENUS`, not `enUS`, because all-caps was u
 
 ## Questions and Comments
 
-Please feel free to contact me with questions, comments, bug reports, feature requests...
-
-## Things To Do
-
-* Convert all language tags and object properties to lower-case to avoid the case-sensitive problem (not sure it's actually a "problem")
-* Use accept-language package to pick language for each message separately? (Mixed translations could be a weird user experience)
+I'd love to hear what you think of this package. Please feel free to contact me with questions, comments, feature requests...

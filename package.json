@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/gebbber/useTranslate#readme",
   "dependencies": {
-    "accept-language": "^3.0.18",
+    "picklanguage": "^1.0.1",
     "react": "^17.0.2"
   }
 }
