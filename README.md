@@ -61,6 +61,65 @@ const Messages = {
 }
 ```
 
+As of version 0.1.0, `useTranslate` will accept the following, in addition to an object full of message objects (as shown above):
+
+* A single message object, which will be translated
+* A string, which will be returned as-is
+* No argument, which will return a translator function that with this same behavior that can be used later in the render process (not as a hook)
+
+This way a server response can be sent back as either a string or a translatable message object, and it can be displayed to the user, translating objects when translations are available, or displaying as-is for strings:
+
+
+```javascript
+import { useTranslate } from 'usetranslate';
+
+function messageParagraph() {
+
+    // string is output as is:
+
+    const Message = useTranslate('Hello'); 
+
+    return (<p>
+        {Message}
+    </p>);
+
+}
+```
+
+```javascript
+import { useTranslate } from 'usetranslate';
+
+function messageParagraph() {
+
+    // object is translated:
+    const Message = useTranslate({en: 'Hello', frCA: 'Bonjour'}); 
+
+    return (<p>
+        {Message}
+    </p>);
+
+}
+```
+
+```javascript
+import { useTranslate } from 'usetranslate';
+
+function messageParagraph() {
+
+    // object is translated:
+    const Translate = useTranslate(); 
+
+    
+
+    return ( <div> {Translate(someStringOrObject) </div> );
+
+}
+
+
+```
+
+
+
 ***
 
 ## More Sophisticated Uses

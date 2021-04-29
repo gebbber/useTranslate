@@ -21,14 +21,23 @@ export function Localize(props) {
 
 }
 
-export function useTranslate(Messages) {
+export function useTranslate(MessageOrMessages) {
     
     const Translate = useContext(TranslatorContext);
 
-    const Translated = {};
+    if (typeof MessageOrMessages === 'undefined') return useTranslate;
+    if (typeof MessageOrMessages === 'string') return MessageOrMessages;
 
-    for (const Message in Messages) {
-        Translated[Message] = Translate(Messages[Message]);
+    const Translated = {};
+    let foundObject;
+    for (const message in MessageOrMessages) {
+        if (typeof MessageOrMessages[message] === 'object') {
+            foundObject = true;
+            Translated[message] = Translate(MessageOrMessages[message]);
+        } else {
+            if (foundObject) throw new Error('Translation target had mixed strings and sub-objects');
+            else return Translate(MessageOrMessages);
+        }
     }
 
     return Translated;
